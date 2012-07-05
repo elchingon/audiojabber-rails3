@@ -44,7 +44,7 @@ end
 
 Jabber::debug = true
 
-config   = YAML.load_file('config.yml')
+config   = YAML.load_file('script/custom/config.yml')
 username = config['from']['jid']
 password = config['from']['password']
 muc_jid = config['muc']['jid']
@@ -81,7 +81,7 @@ class AudioJabberIM
     listen_for_presence_notifications
     listen_for_messages
 
-    #send_initial_presence
+    send_initial_presence
 
     Thread.stop if stop_thread
   end
@@ -106,10 +106,9 @@ class AudioJabberIM
 
   def send_initial_presence
     @room.add_join_callback do |m|
-      msg = Jabber::Message.new(m.to, "Welcome to Audioair")
-      msg.gsub!(/\x01/,'*')
-      msg.gsub!(/&nbsp;/,' ')
+      msg = Jabber::Message.new(m.to, "Aj here.")
       @room.send(msg)
+      log('Initial Presence.')
     end
   end
 
@@ -239,9 +238,12 @@ class AudioJabberIM
 
   def create_user(username, password, host, to)
 
-    bot = Jabber::Simple.new(username + "@" + host, password)
-
-
+    Thread.new do
+      jid    = Jabber::JID.new(username + "@" + host)
+      client = Jabber::Client.new(jid)
+      client.connect
+      client.auth(password)
+    end
   end
 
   def log(message)

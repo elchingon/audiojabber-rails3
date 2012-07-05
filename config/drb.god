@@ -1,4 +1,4 @@
-Rails.root = File.dirname(File.dirname(__FILE__))
+@root = File.dirname(File.dirname(__FILE__))
 
 def generic_monitoring(w, options = {})
   w.start_if do |start|
@@ -34,7 +34,7 @@ def generic_monitoring(w, options = {})
 end
 
 God.watch do |w|
-  script = "#{Rails.root}/script/custom/basic_muc_drb.rb"
+  script = "#{@root}/script/custom/basic_muc_drb.rb"
   w.name = "drb-script"
   w.group = "drb"
   w.interval = 60.seconds
@@ -43,7 +43,7 @@ God.watch do |w|
   w.stop = "#{script} stop"
   w.start_grace = 20.seconds
   w.restart_grace = 20.seconds
-  w.pid_file = "#{Rails.root}/log/drb.pid"
+  w.pid_file = "#{@root}/log/drb.pid"
 
   w.behavior(:clean_pid_file)
 
