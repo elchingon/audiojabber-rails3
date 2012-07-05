@@ -3,7 +3,9 @@ AudiojabberDrb::Application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do
-      resources :chat_messages
+      resources :chat_messages do
+        post 'create_new_chat_user', :on => :collection
+      end
     end
   end
   # The priority is based upon order of creation:

@@ -15,8 +15,6 @@ module Api
       def create
         chat_message = ChatMessage.create(params[:chat_message])
 
-        send_message(chat_message.body)
-
         respond_with chat_message
       end
 
@@ -25,7 +23,24 @@ module Api
       end
 
       def destroy
-        respond_with ChatMessage.destroy(params[:id])
+        respond_with ChatMessage.find(params[:id]).destroy()
+      end
+
+      def create_new_chat_user
+
+        if (!params[:username].empty?)
+
+          site = RestClient::Resource.new('http://jabber.ridingrails.info/')
+          site['chattools/createuser.php'].post(:username => params[:username], :password =>  'password'){|response, request, result|
+
+            msg =JSON.parse(response.body)
+            render :json=> {:success=>true, :message=>msg.fetch('text') }, :status=> response.code
+
+          }
+
+        else
+          render :json=> {:success=>false, :message=>"Error with your username"}, :status=>401
+        end
       end
 
       private

@@ -11,6 +11,7 @@ require 'xmpp4r/muc'
 require 'yaml'
 require 'drb'
 require 'rexml/document'
+require 'rest_client'
 
 # require 'xmpp4r-simple'
 
@@ -81,7 +82,7 @@ class AudioJabberIM
     listen_for_presence_notifications
     listen_for_messages
 
-    send_initial_presence
+    #send_initial_presence
 
     Thread.stop if stop_thread
   end
@@ -106,7 +107,7 @@ class AudioJabberIM
 
   def send_initial_presence
     @room.add_join_callback do |m|
-      msg = Jabber::Message.new(m.to, "Aj here.")
+      msg = Jabber::Message.new(m.to, "Hey, AJ here. What's happening out there?")
       @room.send(msg)
       log('Initial Presence.')
     end
@@ -126,21 +127,21 @@ class AudioJabberIM
   def listen_for_messages
     @room.add_message_callback do |m|
       if m.type != :error
-        # if !@friends_sent_to.include?(m.from)
-        if @friends_sent_to.empty?
-          msg = Jabber::Message.new(m.from, "Hey. What's happening out there?")
+        if !@friends_sent_to.include?(m.from) && m.from.resource != @client.jid.node
+        #if @friends_sent_to.empty?
+          msg = Jabber::Message.new(m.from, "Welcome to AudioJabber, " + m.from.resource)
           msg.type = :chat
           @room.send(msg)
           @friends_sent_to << m.from
         end
 
         case m.body.to_s
-          when 'exit'
-            msg      = Jabber::Message.new(m.from, "Exiting ...")
-            msg.type = :chat
-            @room.send(msg)
-
-            logout
+          #when 'exit'
+          #  msg      = Jabber::Message.new(m.from, "Exiting ...")
+          #  msg.type = :chat
+          #  @room.send(msg)
+          #
+          #  logout
 
           when /\.png/
 
@@ -172,6 +173,10 @@ class AudioJabberIM
             # msg      = Jabber::Message.new(m.from, "You said #{m.body} at #{Time.now.utc}")
             #              msg.type = :chat
             #              @room.send(msg)
+
+            #site = RestClient::Resource.new('http://www.audiojabber.com/')
+            #site['api/v1/chat_messages'].post :chat_message => { :chatroom_node => @room.room, :user_node => m.from.node, :body =>  m.body.to_s, :posted_on => Time.now.utc }
+
             puts "RECEIVED: " + m.body.to_s
 
         end
@@ -236,13 +241,13 @@ class AudioJabberIM
     end
   end
 
-  def create_user(username, password, host, to)
+  def create_user(username, password)
 
     Thread.new do
-      jid    = Jabber::JID.new(username + "@" + host)
-      client = Jabber::Client.new(jid)
-      client.connect
-      client.auth(password)
+
+      client = Jabber::Client.register(password, { :username => username})
+      return client
+
     end
   end
 
