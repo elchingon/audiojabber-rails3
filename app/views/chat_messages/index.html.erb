@@ -1,0 +1,31 @@
+<h1>Listing chat_messages</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>User node</th>
+    <th>Chatroom node</th>
+    <th>Body</th>
+    <th>Posted on</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @chat_messages.each do |chat_message| %>
+  <tr>
+    <td><%= chat_message.user_id %></td>
+    <td><%= chat_message.user_node %></td>
+    <td><%= chat_message.chatroom_node %></td>
+    <td><%= chat_message.body %></td>
+    <td><%= chat_message.posted_on %></td>
+    <td><%= link_to 'Show', chat_message %></td>
+    <td><%= link_to 'Edit', edit_chat_message_path(chat_message) %></td>
+    <td><%= link_to 'Destroy', chat_message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Chat message', new_chat_message_path %>

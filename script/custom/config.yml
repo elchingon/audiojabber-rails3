@@ -1,0 +1,13 @@
+---
+from:
+  jid: audioair@jabber.ridingrails.info/
+  password: password
+to:
+  jid: alexiicarey@jabber.ridingrails.info/
+muc:
+  jid: audioair@conference.jabber.ridingrails.info/      
+vcard:
+  nickname: XMPP Bot
+  fn: XMPP Bot
+  url: http://audiojabber.com
+  photo_path: avatar-red.png

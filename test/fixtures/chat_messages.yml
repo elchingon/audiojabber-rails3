@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  user_node: MyString
+  chatroom_node: MyString
+  body: MyText
+  posted_on: 2012-07-04 20:12:14
+
+two:
+  user_id: 1
+  user_node: MyString
+  chatroom_node: MyString
+  body: MyText
+  posted_on: 2012-07-04 20:12:14
