@@ -10,11 +10,39 @@ require 'xmpp4r/roster'
 require 'xmpp4r/muc'
 require 'yaml'
 require 'drb'
+require 'rexml/document'
 
 # require 'xmpp4r-simple'
 
+# Encoding patch cus we are using ruby 1.9.3 - FIXME
+require 'socket'
+class TCPSocket
+  def external_encoding
+    Encoding::BINARY
+  end
+end
 
-# Jabber::debug = true
+require 'rexml/source'
+class REXML::IOSource
+  alias_method :encoding_assign, :encoding=
+  def encoding=(value)
+    encoding_assign(value) if value
+  end
+end
+
+begin
+  # OpenSSL is optional and can be missing
+  require 'openssl'
+  class OpenSSL::SSL::SSLSocket
+    def external_encoding
+      Encoding::BINARY
+    end
+  end
+rescue
+end
+
+
+Jabber::debug = true
 
 config   = YAML.load_file('config.yml')
 username = config['from']['jid']
@@ -48,14 +76,14 @@ class AudioJabberIM
     login(username, password)
 
     join_room(muc_jid)
-    
+
     listen_for_subscription_requests
     listen_for_presence_notifications
     listen_for_messages
-        
+
     #send_initial_presence
 
-     Thread.stop if stop_thread
+    Thread.stop if stop_thread
   end
 
   def login(username, password)
@@ -71,13 +99,17 @@ class AudioJabberIM
   end
 
   def join_room(muc_jid)
-    @room = Jabber::MUC::SimpleMUCClient.new(@client) 
+
+    @room = Jabber::MUC::SimpleMUCClient.new(@client)
     @room.join(Jabber::JID.new(muc_jid + @client.jid.node))
   end
-    
+
   def send_initial_presence
     @room.add_join_callback do |m|
-       @room.send(Jabber::Message.new(m.to, "Hello #{m.from}!")) 
+      msg = Jabber::Message.new(m.to, "Welcome to Audioair")
+      msg.gsub!(/\x01/,'*')
+      msg.gsub!(/&nbsp;/,' ')
+      @room.send(msg)
     end
   end
 
@@ -95,60 +127,61 @@ class AudioJabberIM
   def listen_for_messages
     @room.add_message_callback do |m|
       if m.type != :error
+        # if !@friends_sent_to.include?(m.from)
         if @friends_sent_to.empty?
-             # msg = Jabber::Message.new(m.from, "Yep.")
-             #             msg.type = :chat
-             #             @room.send(msg)
-             @friends_sent_to << m.from
-           end
+          msg = Jabber::Message.new(m.from, "Hey. What's happening out there?")
+          msg.type = :chat
+          @room.send(msg)
+          @friends_sent_to << m.from
+        end
 
-           case m.body.to_s
-           when 'exit'
-             msg      = Jabber::Message.new(m.from, "Exiting ...")
-             msg.type = :chat
-             @room.send(msg)
+        case m.body.to_s
+          when 'exit'
+            msg      = Jabber::Message.new(m.from, "Exiting ...")
+            msg.type = :chat
+            @room.send(msg)
 
-             logout
+            logout
 
-           when /\.png/
+          when /\.png/
 
-             puts "Changing to #{m.body}"
-             if vcard_config = @config['vcard']
-               photo = IO::readlines(m.body.to_s).to_s
-               @avatar_hash = Digest::SHA1.hexdigest(photo)
+            puts "Changing to #{m.body}"
+            if vcard_config = @config['vcard']
+              photo = IO::readlines(m.body.to_s).to_s
+              @avatar_hash = Digest::SHA1.hexdigest(photo)
 
-               Thread.new do
-                 vcard = Jabber::Vcard::IqVcard.new({
-                   'NICKNAME' => vcard_config['nickname'],
-                   'FN' => vcard_config['fn'],
-                   'URL' => vcard_config['url'],
-                   'PHOTO/TYPE' => 'image/png',
-                   'PHOTO/BINVAL' => Base64::encode64(photo)
-                 })
-                 Jabber::Vcard::Helper::set(@client, vcard)
-               end
+              Thread.new do
+                vcard = Jabber::Vcard::IqVcard.new({
+                                                       'NICKNAME' => vcard_config['nickname'],
+                                                       'FN' => vcard_config['fn'],
+                                                       'URL' => vcard_config['url'],
+                                                       'PHOTO/TYPE' => 'image/png',
+                                                       'PHOTO/BINVAL' => Base64::encode64(photo)
+                                                   })
+                Jabber::Vcard::Helper::set(@client, vcard)
+              end
 
-               presence = Jabber::Presence.new(:chat, "Present with new avatar")
-               x = presence.add(REXML::Element.new('x'))
-               x.add_namespace 'vcard-temp:x:update'
-               x.add(REXML::Element.new('photo')).text = @avatar_hash
-               @room.send presence
+              presence = Jabber::Presence.new(:chat, "Present with new avatar")
+              x = presence.add(REXML::Element.new('x'))
+              x.add_namespace 'vcard-temp:x:update'
+              x.add(REXML::Element.new('photo')).text = @avatar_hash
+              @room.send presence
 
-             end
+            end
 
-           else
-             # msg      = Jabber::Message.new(m.from, "You said #{m.body} at #{Time.now.utc}")
-             #              msg.type = :chat
-             #              @room.send(msg)
-             puts "RECEIVED: " + m.body.to_s
+          else
+            # msg      = Jabber::Message.new(m.from, "You said #{m.body} at #{Time.now.utc}")
+            #              msg.type = :chat
+            #              @room.send(msg)
+            puts "RECEIVED: " + m.body.to_s
 
-           end
-         else
-           log [m.type.to_s, m.body].join(": ")
-         end
-      
-     end
-    
+        end
+      else
+        log [m.type.to_s, m.body].join(": ")
+      end
+
+    end
+
   end
 
   ##
@@ -157,12 +190,12 @@ class AudioJabberIM
   def listen_for_presence_notifications
     @room.add_presence_callback do |m|
       case m.type
-      when nil # status: available
-        log "PRESENCE: #{m.from.to_short_s} is online"
-        @friends_online[m.from.to_short_s] = true
-      when :unavailable
-        log "PRESENCE: #{m.from.to_short_s} is offline"
-        @friends_online[m.from.to_short_s] = false
+        when nil # status: available
+          log "PRESENCE: #{m.from.to_short_s} is online"
+          @friends_online[m.from.to_short_s] = true
+        when :unavailable
+          log "PRESENCE: #{m.from.to_short_s} is offline"
+          @friends_online[m.from.to_short_s] = false
       end
     end
   end
@@ -171,50 +204,50 @@ class AudioJabberIM
     log("Sending message to #{to}")
     msg      = Jabber::Message.new(to, message)
     msg.type = :chat
-    @room.send(msg)    
+    @room.send(msg)
   end
 
   def change_color(color_name=:blue)
     if vcard_config = @config['vcard']
       filename = case color_name
-      when :blue
-        'avatar-blue.png'
-      when :red
-        'avatar-red.png'
-      end
+                   when :blue
+                     'avatar-blue.png'
+                   when :red
+                     'avatar-red.png'
+                 end
       photo = IO::readlines(filename).to_s
       @avatar_hash = Digest::SHA1.hexdigest(photo)
 
       Thread.new do
         vcard = Jabber::Vcard::IqVcard.new({
-          'NICKNAME' => vcard_config['nickname'],
-          'FN' => vcard_config['fn'],
-          'URL' => vcard_config['url'],
-          'PHOTO/TYPE' => 'image/png',
-          'PHOTO/BINVAL' => Base64::encode64(photo)
-        })
+                                               'NICKNAME' => vcard_config['nickname'],
+                                               'FN' => vcard_config['fn'],
+                                               'URL' => vcard_config['url'],
+                                               'PHOTO/TYPE' => 'image/png',
+                                               'PHOTO/BINVAL' => Base64::encode64(photo)
+                                           })
         Jabber::Vcard::Helper::set(@client, vcard)
       end
-      
+
       presence = Jabber::Presence.new(:chat, "Present with new avatar")
       x = presence.add(REXML::Element.new('x'))
       x.add_namespace 'vcard-temp:x:update'
       x.add(REXML::Element.new('photo')).text = @avatar_hash
       @room.send presence
-    end    
+    end
   end
-  
+
   def create_user(username, password, host, to)
 
     bot = Jabber::Simple.new(username + "@" + host, password)
-  
-    
+
+
   end
-  
+
   def log(message)
     puts(message) if Jabber::debug
   end
-  
+
 end
 
 DRb.start_service("druby://localhost:7777", AudioJabberIM.new(username, password, muc_jid, config, false))

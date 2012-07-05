@@ -1,7 +1,7 @@
 ---
 from:
-  jid: audioair@jabber.ridingrails.info/
-  password: password
+  jid: aj@jabber.ridingrails.info/
+  password: aud10!
 to:
   jid: alexiicarey@jabber.ridingrails.info/
 muc:
@@ -11,3 +11,15 @@ vcard:
   fn: XMPP Bot
   url: http://audiojabber.com
   photo_path: avatar-red.png
+
+# from:
+#   jid: audioair@jabber.org/
+#   password: airborne1
+# to:
+#   jid: elchingonmancos@jabber.org/
+
+# from:
+#   jid: audioair@jabber.ridingrails.info/
+#   password: password
+# to:
+#   jid: alexiicarey@jabber.ridingrails.info/
