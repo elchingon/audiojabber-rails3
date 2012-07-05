@@ -42,7 +42,6 @@ God.watch do |w|
   w.restart = "ruby #{script}"
   w.start_grace = 20.seconds
   w.restart_grace = 20.seconds
-  w.keepalive
 
-  generic_monitoring(w, :cpu_limit => 80.percent, :memory_limit => 100.megabytes)
+ # generic_monitoring(w, :cpu_limit => 80.percent, :memory_limit => 100.megabytes)
 end
