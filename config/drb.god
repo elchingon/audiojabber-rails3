@@ -38,14 +38,11 @@ God.watch do |w|
   w.name = "drb-script"
   w.group = "drb"
   w.interval = 60.seconds
-  w.start = "#{script} start"
-  w.restart = "#{script} restart"
-  w.stop = "#{script} stop"
+  w.start = "ruby #{script}"
+  w.restart = "ruby #{script}"
   w.start_grace = 20.seconds
   w.restart_grace = 20.seconds
-  w.pid_file = "#{@root}/log/drb.pid"
-
-  w.behavior(:clean_pid_file)
+  w.keepalive
 
   generic_monitoring(w, :cpu_limit => 80.percent, :memory_limit => 100.megabytes)
 end
