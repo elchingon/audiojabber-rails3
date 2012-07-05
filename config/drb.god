@@ -34,7 +34,9 @@ def generic_monitoring(w, options = {})
 end
 
 God.watch do |w|
-  script = "#{@root}/script/custom/basic_muc_drb.rb"
+
+  script = "script/custom/basic_muc_drb.rb"
+  w.dir =  "#{@root}"
   w.name = "drb-script"
   w.group = "drb"
   w.interval = 60.seconds
@@ -42,8 +44,10 @@ God.watch do |w|
   w.restart = "ruby #{script}"
   w.start_grace = 20.seconds
   w.restart_grace = 20.seconds
-  w.pid_file = "#{@root}/log/backgroundrb.pid"
-  w.behavior(:clean_pid_file)
+  w.log = "log/drb.log"
+  #w.pid_file = "#{@root}/log/backgroundrb.pid"
+  #w.behavior(:clean_pid_file)
+
 
   generic_monitoring(w, :cpu_limit => 80.percent, :memory_limit => 100.megabytes)
 end
