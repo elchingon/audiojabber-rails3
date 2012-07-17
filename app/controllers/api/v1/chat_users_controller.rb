@@ -74,7 +74,7 @@ module Api
 
             @user = ChatUser.new
             @user.user_node = params[:username]
-            @user.update_user_params(user_json)  unless user_json.empty?
+            @user.update_user_params(user_json)  unless user_json.nil?
 
             if @user.save
               msg =JSON.parse(response.body)
