@@ -5,12 +5,15 @@ class ChatUser < ActiveRecord::Base
   def self.create_user_by_params(user_json, user_node)
 
     username = !user_json.empty? ? user_json.fetch("username") : nil
-    if !ChatUser.find_all_by_user_node_and_username(user_node, username)
+
+    users = ChatUser.where(:user_node => user_node).where(:username => username)
+    if users.empty?
       @user = ChatUser.new
       @user.user_node = user_node
 
       if !user_json.empty?
         @user.username = user_json.fetch("username")
+        @user.user_id = user_json.fetch("userId")
         @user.first_name = user_json.fetch("firstName")
         @user.last_name = user_json.fetch("lastName")
         @user.uid = user_json.fetch("fbId")
