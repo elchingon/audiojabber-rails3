@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MessagesControllerTest < ActionController::TestCase
+class ChatUserTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

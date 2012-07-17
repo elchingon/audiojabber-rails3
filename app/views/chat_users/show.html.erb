@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @chat_user.user_id %>
+</p>
+
+<p>
+  <b>User node:</b>
+  <%= @chat_user.user_node %>
+</p>
+
+<p>
+  <b>Username:</b>
+  <%= @chat_user.username %>
+</p>
+
+<p>
+  <b>Avatar link:</b>
+  <%= @chat_user.avatar_link %>
+</p>
+
+<p>
+  <b>First name:</b>
+  <%= @chat_user.first_name %>
+</p>
+
+<p>
+  <b>Last name:</b>
+  <%= @chat_user.last_name %>
+</p>
+
+<p>
+  <b>Uid:</b>
+  <%= @chat_user.uid %>
+</p>
+
+
+<%= link_to 'Edit', edit_chat_user_path(@chat_user) %> |
+<%= link_to 'Back', chat_users_path %>

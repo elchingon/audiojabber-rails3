@@ -1,0 +1,35 @@
+<h1>Listing chat_users</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>User node</th>
+    <th>Username</th>
+    <th>Avatar link</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Uid</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @chat_users.each do |chat_user| %>
+  <tr>
+    <td><%= chat_user.user_id %></td>
+    <td><%= chat_user.user_node %></td>
+    <td><%= chat_user.username %></td>
+    <td><%= chat_user.avatar_link %></td>
+    <td><%= chat_user.first_name %></td>
+    <td><%= chat_user.last_name %></td>
+    <td><%= chat_user.uid %></td>
+    <td><%= link_to 'Show', chat_user %></td>
+    <td><%= link_to 'Edit', edit_chat_user_path(chat_user) %></td>
+    <td><%= link_to 'Destroy', chat_user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Chat user', new_chat_user_path %>

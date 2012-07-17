@@ -34,4 +34,7 @@ AudiojabberDrb::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  config.my_app.aa_api_server = "http://api.audioair.local/v1/"
+  config.my_app.jabber_server = "http://jabber.ridingrails.info/"
 end

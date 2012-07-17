@@ -43,7 +43,7 @@ rescue
 end
 
 
-Jabber::debug = true
+#Jabber::debug = true
 
 config   = YAML.load_file('script/custom/config.yml')
 username = config['from']['jid']
@@ -127,9 +127,9 @@ class AudioJabberIM
   def listen_for_messages
     @room.add_message_callback do |m|
       if m.type != :error
-        if !@friends_sent_to.include?(m.from) && m.from.resource != @client.jid.node
+        if !@friends_sent_to.include?(m.from) && m.from.resource != @client.jid.node  && !m.from.resource.include?("anonymous-")
         #if @friends_sent_to.empty?
-          msg = Jabber::Message.new(m.from, "Welcome to AudioJabber, " + m.from.resource)
+          msg = Jabber::Message.new(m.from, "Welcome to Audioair, " + m.from.resource)
           msg.type = :chat
           @room.send(msg)
           @friends_sent_to << m.from
