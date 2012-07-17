@@ -4,7 +4,7 @@ class ChatUser < ActiveRecord::Base
   # This is called to handle user verification requests that return response parameters
   def update_user_params(user_json)
 
-    user_json = JSON.parse(user_json)
+    user_json = JSON.parse(user_json) if user_json.is_json?
     self.username = user_json.fetch("username")
     self.first_name = user_json.fetch("firstName")
     self.last_name = user_json.fetch("lastName")
