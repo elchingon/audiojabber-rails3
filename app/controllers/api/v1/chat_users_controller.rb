@@ -72,11 +72,10 @@ module Api
           site = RestClient::Resource.new(AudiojabberDrb::Application.config.my_app.jabber_server)
           site['chattools/createuser.php'].post(:username => params[:username], :password =>  'password'){|response, request, result|
 
-            @user = ChatUser.new
-            @user.user_node = params[:username]
-            @user.update_user_params(user_json)  unless user_json.nil?
 
-            if @user.save
+            @user = ChatUser.create_user_by_params(user_json, params[:username])
+
+            if @user.nil?
               msg =JSON.parse(response.body)
               render :json=> {:success=>true, :message=>msg.fetch('text') }, :status=> response.code
             else
