@@ -2,7 +2,7 @@ class ChatUser < ActiveRecord::Base
   attr_accessible :avatar_link, :first_name, :last_name, :uid, :user_id, :user_node, :username
 
   # This is called to handle user verification requests that return response parameters
-  def create_user_by_params(user_json, user_node)
+  def self.create_user_by_params(user_json, user_node)
 
     username = !user_json.empty? ? user_json.fetch("username") : nil
     if !ChatUser.find_all_by_user_node_and_username(user_node, username)
