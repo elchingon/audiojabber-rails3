@@ -13,7 +13,7 @@ class ChatUser < ActiveRecord::Base
 
       if !user_json.empty?
         @user.username = user_json.fetch("username")
-        @user.user_id = user_json.fetch("userId")
+        @user.user_id = user_json.fetch("id")
         @user.first_name = user_json.fetch("firstName")
         @user.last_name = user_json.fetch("lastName")
         @user.uid = user_json.fetch("fbId")
