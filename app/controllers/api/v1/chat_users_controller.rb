@@ -32,8 +32,8 @@ module Api
       def create_new_chat_user
 
         user_json = nil
-        if (!params[:mSId].empty?)
-          if (!params[:fbToken].empty?)
+        if (params[:mSId].present?)
+          if (params[:fbToken].present?)
             site = RestClient::Resource.new(AudiojabberDrb::Application.config.my_app.aa_api_server)
             site['verify-user-fb.html'].post(:fbToken => params[:fbToken], :mSId =>  params[:mSId]) { |response, request, result|
 
@@ -67,7 +67,7 @@ module Api
         end
 
 
-        if (!params[:username].empty?)
+        if (params[:username].present?)
 
           site = RestClient::Resource.new(AudiojabberDrb::Application.config.my_app.jabber_server)
           site['chattools/createuser.php'].post(:username => params[:username], :password =>  'password'){|response, request, result|
