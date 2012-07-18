@@ -94,7 +94,7 @@ module Api
 
             @user = ChatUser.create_user_by_params(user_json, params[:username])
 
-            if !@user.empty?
+            if !@user.nil?
               msg =JSON.parse(response.body)
               render :json=> {:success=>true, :message=>msg.fetch('text') }, :status=> response.code
             else
