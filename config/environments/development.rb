@@ -35,6 +35,8 @@ AudiojabberDrb::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
+  config.action_mailer.default_url_options = { :host => 'audioair.local' }
+
   config.my_app.aa_api_server = "http://api.audioair.local/v1/"
   config.my_app.jabber_server = "http://jabber.ridingrails.info/"
 end

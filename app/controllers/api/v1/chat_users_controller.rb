@@ -12,19 +12,19 @@ module Api
         respond_with ChatUser.find(params[:id])
       end
 
-      def create
-        chat_user = ChatUser.create(params[:chat_user])
-
-        respond_with chat_user
-      end
-
-      def update
-        respond_with ChatUser.update(params[:id], params[:chat_users])
-      end
-
-      def destroy
-        respond_with ChatUser.find(params[:id]).destroy()
-      end
+      #def create
+      #  chat_user = ChatUser.create(params[:chat_user])
+      #
+      #  respond_with chat_user
+      #end
+      #
+      #def update
+      #  respond_with ChatUser.update(params[:id], params[:chat_users])
+      #end
+      #
+      #def destroy
+      #  respond_with ChatUser.find(params[:id]).destroy()
+      #end
 
       # =begin apidoc
       # url:: /api/v1/chat_users/create_new_chat_user

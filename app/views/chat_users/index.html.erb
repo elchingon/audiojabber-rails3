@@ -9,9 +9,11 @@
     <th>First name</th>
     <th>Last name</th>
     <th>Uid</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <% if current_user.is_admin? -%>
+        <th></th>
+        <th></th>
+        <th></th>
+    <% end %>
   </tr>
 
 <% @chat_users.each do |chat_user| %>
@@ -23,13 +25,17 @@
     <td><%= chat_user.first_name %></td>
     <td><%= chat_user.last_name %></td>
     <td><%= chat_user.uid %></td>
-    <td><%= link_to 'Show', chat_user %></td>
-    <td><%= link_to 'Edit', edit_chat_user_path(chat_user) %></td>
-    <td><%= link_to 'Destroy', chat_user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <% if current_user.is_admin? -%>
+        <td><%= link_to 'Show', chat_user %></td>
+        <td><%= link_to 'Edit', edit_chat_user_path(chat_user) %></td>
+        <td><%= link_to 'Destroy', chat_user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <% end %>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Chat user', new_chat_user_path %>
+<% if current_user.is_admin? -%>
+    <%= link_to 'New Chat user', new_chat_user_path %>
+<% end %>

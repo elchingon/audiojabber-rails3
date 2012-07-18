@@ -19,13 +19,20 @@
     <td><%= chat_message.chatroom_node %></td>
     <td><%= chat_message.body %></td>
     <td><%= chat_message.posted_on %></td>
-    <td><%= link_to 'Show', chat_message %></td>
-    <td><%= link_to 'Edit', edit_chat_message_path(chat_message) %></td>
-    <td><%= link_to 'Destroy', chat_message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <% if current_user.is_admin? -%>
+        <td><%= link_to 'Show', chat_message %></td>
+        <td><%= link_to 'Edit', edit_chat_message_path(chat_message) %></td>
+        <td><%= link_to 'Destroy', chat_message, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+    <% else %>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    <% end %>
   </tr>
 <% end %>
 </table>
 
 <br />
-
-<%= link_to 'New Chat message', new_chat_message_path %>
+<% if current_user.is_admin? -%>
+    <%= link_to 'New Chat message', new_chat_message_path %>
+<% end %>

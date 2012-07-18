@@ -1,4 +1,6 @@
 AudiojabberDrb::Application.routes.draw do
+  devise_for :users
+
   resources :chat_users
 
   resources :chat_messages

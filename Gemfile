@@ -9,7 +9,8 @@ gem 'rails', '3.2.6'
 gem 'mysql2'
 gem 'rest-client'
 
-
+gem 'devise'
+gem 'simple_roles', :git => "git://github.com/stanislaw/simple_roles.git"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -28,6 +29,8 @@ group :production do
 end
 gem 'jquery-rails'
 gem 'json'
+gem "profanity_filter"
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

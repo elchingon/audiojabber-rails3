@@ -173,10 +173,10 @@ class AudioJabberIM
             # msg      = Jabber::Message.new(m.from, "You said #{m.body} at #{Time.now.utc}")
             #              msg.type = :chat
             #              @room.send(msg)
-
+            if m.from.resource != @client.jid.node  && !m.from.resource.include?("anonymous-")
             #site = RestClient::Resource.new('http://www.audiojabber.com/')
             #site['api/v1/chat_messages'].post :chat_message => { :chatroom_node => @room.room, :user_node => m.from.node, :body =>  m.body.to_s, :posted_on => Time.now.utc }
-
+            end
             puts "RECEIVED: " + m.body.to_s
 
         end

@@ -1,4 +1,6 @@
 class ChatMessagesController < ApplicationController
+  before_filter :authenticate_user!
+
   # GET /chat_messages
   # GET /chat_messages.json
   def index
