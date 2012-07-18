@@ -26,9 +26,26 @@ module Api
         respond_with ChatUser.find(params[:id]).destroy()
       end
 
-      # POST based function that uses to call existing XMLRPC function on jabber server.
+      # =begin apidoc
+      # url:: /api/v1/chat_users/create_new_chat_user
+      # method:: POST
+      # return:: [JSON] - response Success or Error
+      # param:: mSId:string - Mobile Session Id
+      # param:: fbToken:string -  Facebook Auth token
+      #
+      # output:: json
+      # [
+      #   { "success":"[true | false]",
+      #     "message":"Message.",
+      #     "status" : [STATUS_CODE {200|401}]
+      # ]
+      # ::output-end::
+      #
+      #  POST based function that uses to call existing XMLRPC function on jabber server.
       # This will verify Audioair user profile via Facebook token
+      # =end
       # TODO add Audioair user profile oauth token verification
+
       def create_new_chat_user
 
         user_json = nil
@@ -43,6 +60,7 @@ module Api
                 user_json = msg.fetch('user')
               else
                 render :json=> {:success=>false, :message=>msg.fetch('message') }, :status=> msg.fetch('code')
+                return
               end
 
             }
@@ -64,6 +82,7 @@ module Api
           #end
         else
           render :json=> {:success=>false, :message=>"Error with Mobile Session Id"}, :status=>401
+          return
         end
 
 
