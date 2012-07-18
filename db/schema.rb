@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120718203423) do
+ActiveRecord::Schema.define(:version => 20120718225144) do
 
   create_table "chat_messages", :force => true do |t|
     t.integer  "user_id"
