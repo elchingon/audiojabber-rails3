@@ -10,24 +10,29 @@ class ChatUser < ActiveRecord::Base
 
     users = ChatUser.where(:user_node => user_node).where(:username => username).limit(1)
     if users.empty?
-      @user = ChatUser.new
-      @user.user_node = user_node
+      user = ChatUser.new
+      user.user_node = user_node
     else
-      @user = users.first
+      user = users.first
     end
 
     if !user_json.nil?
-      @user.username = user_json.fetch("username")
-      @user.user_id = user_json.fetch("id")
-      @user.first_name = user_json.fetch("firstName")
-      @user.last_name = user_json.fetch("lastName")
-      @user.uid = user_json.fetch("fbId")
-      @user.avatar_url = user_json.fetch("avatarUrl")
+      user.username = user_json.fetch("username")
+      user.user_id = user_json.fetch("id")
+      user.first_name = user_json.fetch("firstName")
+      user.last_name = user_json.fetch("lastName")
+      user.uid = user_json.fetch("fbId")
+      user.avatar_url = user_json.fetch("avatarUrl")
     end
 
-    @user.save
-    return @user
+    user.save
+    user
 
   end
 
+  def self.find_chat_user_by_node(user_node)
+
+    user = ChatUser.find_by_user_node(user_node)
+    user unless user.nil?
+  end
 end
