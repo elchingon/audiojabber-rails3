@@ -5,9 +5,13 @@ module Api
       respond_to :json
 
       def index
-
-
-        respond_with ChatMessage.all
+        if params[:lastChatId].present?
+          messages = ChatMessage.where("`chat_messages`.id > ?", params[:lastChatId])
+          respond_with messages.to_json(:include => :chat_user)
+        else
+          messages  = ChatMessage.all
+          respond_with messages.to_json(:include => :chat_user)
+        end
       end
 
       def show

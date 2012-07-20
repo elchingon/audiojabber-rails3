@@ -1,7 +1,7 @@
 class ChatUser < ActiveRecord::Base
   attr_accessible :avatar_link, :first_name, :last_name, :uid, :user_id, :user_node, :username
 
-  #has_many :chat_messages
+  has_many :chat_messages
 
   # This is called to handle user verification requests that return response parameters
   def self.create_user_by_params(user_json, user_node)

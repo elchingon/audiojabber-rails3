@@ -49,6 +49,7 @@ module Api
       def create_new_chat_user
 
         user_json = nil
+
         if (params[:mSId].present?)
           if (params[:fbToken].present?)
             site = RestClient::Resource.new(AudiojabberDrb::Application.config.my_app.aa_api_server)
