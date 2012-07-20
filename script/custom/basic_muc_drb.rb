@@ -43,7 +43,7 @@ rescue
 end
 
 
-#Jabber::debug = true
+# Jabber::debug = true
 
 config   = YAML.load_file('script/custom/config.yml')
 username = config['from']['jid']
@@ -126,10 +126,11 @@ class AudioJabberIM
 
   def listen_for_messages
     @room.add_message_callback do |m|
+      resource = m.from.resource
       if m.type != :error
-        if !@friends_sent_to.include?(m.from) && m.from.resource != @client.jid.node  && !m.from.resource.include?("anonymous-")
+        if !@friends_sent_to.include?(m.from) && resource != @client.jid.node  && resource != nil && !resource.include?("anonymous-")
         #if @friends_sent_to.empty?
-          msg = Jabber::Message.new(m.from, "Welcome to Audioair, " + m.from.resource)
+          msg = Jabber::Message.new(m.from, "Welcome to Audioair, " + resource)
           msg.type = :chat
           @room.send(msg)
           @friends_sent_to << m.from
@@ -173,9 +174,9 @@ class AudioJabberIM
             # msg      = Jabber::Message.new(m.from, "You said #{m.body} at #{Time.now.utc}")
             #              msg.type = :chat
             #              @room.send(msg)
-            if m.from.resource != @client.jid.node  && !m.from.resource.include?("anonymous-")
+            if resource != @client.jid.node  && !resource.include?("anonymous-")
               site = RestClient::Resource.new('http://www.audiojabber.com/')
-              site['api/v1/chat_messages'].post :chat_message => { :chatroom_node => @room.room, :user_node => m.from.resource, :body =>  m.body.to_s, :posted_on => Time.now.utc }
+              site['api/v1/chat_messages'].post :chat_message => { :chatroom_node => @room.room, :user_node => resource, :body =>  m.body.to_s, :posted_on => Time.now.utc }
             end
             puts "RECEIVED: " + m.body.to_s
 
