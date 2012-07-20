@@ -29,4 +29,5 @@ class ChatUser < ActiveRecord::Base
     return @user
 
   end
+
 end

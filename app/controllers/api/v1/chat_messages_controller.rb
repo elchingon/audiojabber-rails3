@@ -7,11 +7,12 @@ module Api
       def index
         if params[:lastChatId].present?
           messages = ChatMessage.where("`chat_messages`.id > ?", params[:lastChatId])
-          respond_with messages.to_json(:include => :chat_user)
         else
-          messages  = ChatMessage.all
-          respond_with messages.to_json(:include => :chat_user)
+          # Return all message posted in last 3 days
+          messages  = ChatMessage.where("posted_on >= ?", Time.now - (86400*3))
         end
+
+        render :json=> {:success=>true , :status=> 200, :chat_messages =>  JSON.parse(messages.to_json(:include => :chat_user)) }
       end
 
       def show
