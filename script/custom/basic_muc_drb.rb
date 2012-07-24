@@ -125,12 +125,27 @@ class AudioJabberIM
   end
 
   def listen_for_messages
+    msg_index = 1
     @room.add_message_callback do |m|
       resource = m.from.resource
       if m.type != :error
-        if !@friends_sent_to.include?(m.from) && resource != @client.jid.node  && resource != nil && !resource.include?("anonymous-")
+        if resource  && !@friends_sent_to.include?(m.from) && resource != @client.jid.node  && resource != nil && !resource.include?("anonymous-")
         #if @friends_sent_to.empty?
-          msg = Jabber::Message.new(m.from, "Welcome to Audioair, " + resource)
+          case msg_index
+            when 1
+              msg_text = "Welcome to Audioair, " + resource
+              msg_index = 2
+            when 2
+              msg_text = "How's it going " + resource +" ?"
+              msg_index = 3
+            when 3
+              msg_text = "Good to see you " + resource
+              msg_index = 1
+            else
+              msg_text = "Welcome to Audioair, " + resource
+              msg_index = 1
+          end
+          msg = Jabber::Message.new(m.from, msg_text)
           msg.type = :chat
           @room.send(msg)
           @friends_sent_to << m.from
@@ -174,7 +189,7 @@ class AudioJabberIM
             # msg      = Jabber::Message.new(m.from, "You said #{m.body} at #{Time.now.utc}")
             #              msg.type = :chat
             #              @room.send(msg)
-            if resource != @client.jid.node  && !resource.include?("anonymous-")
+            if resource && resource != @client.jid.node  && !resource.include?("anonymous-")
               site = RestClient::Resource.new('http://www.audiojabber.com/')
               site['api/v1/chat_messages'].post :chat_message => { :chatroom_node => @room.room, :user_node => resource, :body =>  m.body.to_s, :posted_on => Time.now.utc }
             end
