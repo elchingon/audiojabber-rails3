@@ -9,7 +9,9 @@ module Api
       # method:: GET
       # return:: [JSON] - response Success or Error
       # param:: lastChatId:string - Last Chat ID- If past call return only chats posted after this id, otherwise defaults to chats posted in last 3days
-      # param:: vId:string -  VENUE ID
+      # param:: chatUserId:string -  chat user id
+      # param:: userNode:string -  chat user node
+      # param:: chatroomNode:string -  chat room node
       #
       # output:: json
       # [
@@ -29,11 +31,19 @@ module Api
       #  Method  to return chat_messages in JSON object. If no lastChatId is passed, defaults to chats posted in last 3days
       # =end
       def index
+
+        conditions = {}
+        {
+            :chat_user_id => :chatUserId,
+            :user_node => :userNode,
+            :chatroom_node => :chatroomNode
+        }.each{|k1, k2| conditions[k1] = params[k2] unless params[k2].blank?}
+
         if params[:lastChatId].present?
-          messages = ChatMessage.where("`chat_messages`.id > ?", params[:lastChatId])
+          messages = ChatMessage.where("`chat_messages`.id > ?", params[:lastChatId]).where(conditions)
         else
           # Return all message posted in last 3 days
-          messages  = ChatMessage.where("posted_on >= ?", Time.now - (86400*3))
+          messages  = ChatMessage.where("posted_on >= ?", 3.days.ago).where(conditions)
         end
 
         render :json=> {:success=>true , :status=> 200, :chat_messages =>  JSON.parse(messages.to_json(:include => :chat_user)) }
