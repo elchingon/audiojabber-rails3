@@ -29,6 +29,7 @@ group :production do
 end
 gem 'jquery-rails'
 gem 'json'
+gem 'newrelic_rpm'
 gem "profanity_filter"
 
 # To use ActiveModel has_secure_password
