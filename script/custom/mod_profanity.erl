@@ -25,7 +25,7 @@
 -include("jlib.hrl").
 
 bad_words() ->
-	["Assface","asshole","asswipe","bastard","bitch","Clit","cock","crap","dick","dyke","enema","fag","fart","fuck","gay","jackoff","jiss","jizm","jizz","knob","Lesbian","masterbate","penis","pussy","queer","rectum","retard","skank","schlong","semen","sex","skank","slut","vagina","suck","whore","bitch","blowjob","clit","fuck","bastard","clits","cock","cunt","fatass","lesbian","s.o.b.","nigga","nigger","nutsack","pussy","scrotum","slut","boobs","whore","feces","gay","jizz","lesbo","poop","porn","screw","twat", "F U C K"].
+	["assface","asshole","asswipe","bastard","bitch","clit","cock","crap","dick","dyke","enema","fag","fart","fuck","gay","jackoff","jiss","jizm","jizz","knob","Lesbian","masterbate","penis","pussy","queer","rectum","retard","skank","schlong","semen","sex","skank","slut","vagina","suck","whore","bitch","blowjob","clit","fuck","bastard","clits","cock","cunt","fatass","lesbian","s.o.b.","nigga","nigger","nutsack","pussy","scrotum","slut","boobs","whore","feces","gay","jizz","lesbo","poop","porn","screw","twat","f u c k"].
 
 start(_Host, _Opts) ->
     ejabberd_hooks:add(filter_packet, global, ?MODULE, filter_packet, 100).
@@ -68,5 +68,5 @@ filter_string(String) ->
     lists:foldl(fun filter_out_word/2, String, BadWords).
 
 filter_out_word(Word, String) ->
-    NewString = erlang:iolist_to_binary(re:replace(String, Word, string:copies("*", length(Word)), [global])),
+    NewString = erlang:iolist_to_binary(re:replace(String, Word, string:copies("*", length(Word)), [global, caseless])),
     NewString.
