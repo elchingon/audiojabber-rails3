@@ -25,7 +25,7 @@
 -include("jlib.hrl").
 
 bad_words() ->
-	["assface","asshole","asswipe","bastard","bitch","clit","cock","crap","dick","dyke","enema","fag","fart","fuck","gay","jackoff","jiss","jizm","jizz","knob","Lesbian","masterbate","penis","pussy","queer","rectum","retard","skank","schlong","semen","sex","skank","slut","vagina","suck","whore","bitch","blowjob","clit","fuck","bastard","clits","cock","cunt","fatass","lesbian","s.o.b.","nigga","nigger","nutsack","pussy","scrotum","slut","boobs","whore","feces","gay","jizz","lesbo","poop","porn","screw","twat","f u c k"].
+	["assface","asshole","asswipe","bastard","bitch","clit","cock","crap","dick","dyke","enema","fag","fart","fuck","gay","jackoff","jiss","jizm","jizz","knob","Lesbian","masterbate","penis","pussy","queer","rectum","retard","skank","schlong","semen","sex","skank","shit","slut","vagina","suck","whore","bitch","blowjob","clit","fuck","bastard","clits","cock","cunt","fatass","lesbian","s.o.b.","nigga","nigger","nutsack","pussy","scrotum","slut","boobs","whore","feces","gay","jizz","lesbo","poop","porn","screw","twat","f u c k"].
 
 start(_Host, _Opts) ->
     ejabberd_hooks:add(filter_packet, global, ?MODULE, filter_packet, 100).
